@@ -1,0 +1,26 @@
+name: go-rest-api
+region: nyc
+services:
+  - name: api
+    dockerfile_path: Dockerfile
+    # Or use the Go buildpack instead of Dockerfile:
+    # environment_slug: go
+    # github:
+    #   repo: your-username/go-rest-api
+    #   branch: main
+    #   deploy_on_push: true
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    # Health check (optional but recommended)
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 5
+      period_seconds: 10
+      timeout_seconds: 3
+      success_threshold: 1
+      failure_threshold: 3
+    # Routes (default is /)
+    routes:
+      - path: /
+
