@@ -6,6 +6,7 @@ A minimal, production-ready REST API written in Go that runs perfectly on [Digit
 
 - Full CRUD for a simple `Item` resource (in-memory store)
 - Health endpoint for App Platform health checks
+- Request logging with method, path, status, response size, and duration
 - Listens on `0.0.0.0:$PORT` (required by App Platform)
 - Multi-stage Dockerfile for small, secure images
 - Optional App Spec (`.do/app.yaml`) for reproducible deployments
@@ -41,4 +42,3 @@ curl -X PUT https://your-app.ondigitalocean.app/api/items/<id> \
 
 # Delete
 curl -X DELETE https://your-app.ondigitalocean.app/api/items/<id>
-

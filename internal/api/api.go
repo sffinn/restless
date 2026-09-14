@@ -2,7 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/sffinn/restless/internal/datastore"
 )
@@ -23,7 +25,46 @@ func New(store *datastore.Store) http.Handler {
 	mux.HandleFunc("PUT /api/items/{id}", api.updateItem)
 	mux.HandleFunc("DELETE /api/items/{id}", api.deleteItem)
 
-	return mux
+	return requestLogger(mux)
+}
+
+type responseRecorder struct {
+	http.ResponseWriter
+	status int
+	bytes  int
+}
+
+func (r *responseRecorder) WriteHeader(status int) {
+	if r.status != 0 {
+		return
+	}
+	r.status = status
+	r.ResponseWriter.WriteHeader(status)
+}
+
+func (r *responseRecorder) Write(body []byte) (int, error) {
+	if r.status == 0 {
+		r.WriteHeader(http.StatusOK)
+	}
+	n, err := r.ResponseWriter.Write(body)
+	r.bytes += n
+	return n, err
+}
+
+func requestLogger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		recorder := &responseRecorder{ResponseWriter: w}
+
+		next.ServeHTTP(recorder, r)
+
+		status := recorder.status
+		if status == 0 {
+			status = http.StatusOK
+		}
+		log.Printf("request method=%s path=%s status=%d bytes=%d duration=%s",
+			r.Method, r.URL.Path, status, recorder.bytes, time.Since(start))
+	})
 }
 
 func (a *API) health(w http.ResponseWriter, r *http.Request) {
