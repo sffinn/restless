@@ -6,6 +6,7 @@
 # Re-include the entries we want to track.
 !/.do
 !/internal
+!/scripts
 !/.dockerignore
 !/Dockerfile
 !/go.mod
