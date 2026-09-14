@@ -1,0 +1,14 @@
+# Allow-list .gitignore: ignore everything, then un-ignore what we want tracked.
+
+# Ignore every top-level entry by default.
+/*
+
+# Re-include the entries we want to track.
+!/.do
+!/internal
+!/.dockerignore
+!/Dockerfile
+!/go.mod
+!/go.sum
+!/main.go
+!/README.md
